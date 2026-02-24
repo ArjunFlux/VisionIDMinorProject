@@ -1,37 +1,55 @@
 package com.example.VisionIdBackend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.example.VisionIdBackend.entity.BaseEntity;
+import com.example.VisionIdBackend.entity.StudentEntity;
+import com.example.VisionIdBackend.entity.TeacherEntity;
+import com.example.VisionIdBackend.entity.enums.AttendanceStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import tools.jackson.core.ObjectReadContext;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-
 
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"student_id", "date"})
+        },
+        indexes = {
+                @Index(name = "idx_attendance_date", columnList = "date")
+        }
+)
 public class AttendanceEntity extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
     private StudentEntity studentEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "teacher_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teacher_id", nullable = false)
     private TeacherEntity markedBy;
-    private String status; // PRESENT / ABSENT
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AttendanceStatus status;
+
+    @Column(nullable = false)
     private LocalDate date;
-
-
-
-
 }
+
+
+//What is FetchType.LAZY?
+//
+//When you have:
+//@ManyToOne(fetch = FetchType.LAZY)
+//private StudentEntity studentEntity;
+//It means:
+//🔹 “Do NOT load the Student from database immediately.”
+//🔹 “Load it ONLY when I actually use it.”
+// This prevents N+1 query problem

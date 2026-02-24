@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface TeacherRepository extends JpaRepository<TeacherEntity,Long>{
 
     TeacherEntity findByUid(String username);
+
+    Optional<TeacherEntity> findByEmail(String email);
 }
