@@ -1,12 +1,13 @@
 package com.example.VisionIdBackend.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,4 +27,12 @@ public class TeacherEntity extends BaseEntity {
     private String uid;    //Unique id
 
     private String password;
+
+    @ManyToMany
+    @JoinTable(
+            name = "teacher_subject",
+            joinColumns = @JoinColumn(name = "teacher_uid"),
+            inverseJoinColumns = @JoinColumn(name = "subject_code")
+    )
+    private List<SubjectEntity> subjects;
 }

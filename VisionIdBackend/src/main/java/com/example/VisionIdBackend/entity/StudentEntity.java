@@ -26,7 +26,6 @@ public class StudentEntity extends BaseEntity {
 
     private String email;
 
-    private String faceId;
 
     @ManyToOne
     @JoinColumn(name = "class_id")

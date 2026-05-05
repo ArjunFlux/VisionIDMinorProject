@@ -1,6 +1,7 @@
 package com.example.VisionIdBackend.dto.ai;
 
 
+import com.example.VisionIdBackend.dto.SubjectDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.PreUpdate;
 import lombok.Data;
@@ -14,6 +15,8 @@ import java.util.List;
 @Data
 public class AIRequestDto {
 
+    @Column(nullable = false)
+    private String subjectCode;
 
     @Column(nullable = false)
     private String batchCode; //23A11

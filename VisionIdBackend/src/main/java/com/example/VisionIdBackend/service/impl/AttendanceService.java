@@ -2,22 +2,17 @@ package com.example.VisionIdBackend.service.impl;
 
 
 import com.example.VisionIdBackend.dto.ai.AIRequestDto;
-import com.example.VisionIdBackend.entity.AttendanceEntity;
-import com.example.VisionIdBackend.entity.ClassEntity;
-import com.example.VisionIdBackend.entity.StudentEntity;
-import com.example.VisionIdBackend.entity.TeacherEntity;
+import com.example.VisionIdBackend.entity.*;
 import com.example.VisionIdBackend.entity.enums.AttendanceStatus;
 import com.example.VisionIdBackend.exception.ResourceNotFoundException;
 import com.example.VisionIdBackend.exception.TeacherAlreadyExistsException;
-import com.example.VisionIdBackend.repository.AttendanceRepository;
-import com.example.VisionIdBackend.repository.ClassRepository;
-import com.example.VisionIdBackend.repository.StudentRepository;
-import com.example.VisionIdBackend.repository.TeacherRepository;
+import com.example.VisionIdBackend.repository.*;
 import com.example.VisionIdBackend.service.IAttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,9 +25,14 @@ public class AttendanceService implements IAttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final TeacherRepository teacherRepository;
 
+    private final SubjectRepository subjectRepository;
+
 
     @Transactional
     public List<StudentEntity> processAIAttendance(AIRequestDto request, String teacherUid) {
+
+        SubjectEntity entity = subjectRepository.findByCode(request.getSubjectCode()).orElseThrow(
+                () -> new ResourceNotFoundException("Subject does not exists"));
 
 
         ClassEntity classEntity = classRepository
@@ -60,19 +60,18 @@ public class AttendanceService implements IAttendanceService {
         }
 
 
-
         TeacherEntity teacher = teacherRepository.findByUid(teacherUid);
 
-        if(teacher == null) {
+        if (teacher == null) {
             throw new ResourceNotFoundException(teacherUid);
         }
 
         List<AttendanceEntity> attendanceList = new ArrayList<>();
 
-        for(StudentEntity student : students) {
+        for (StudentEntity student : students) {
 
             AttendanceEntity attendance = new AttendanceEntity();
-
+            attendance.setSubjectEntity(entity);
             attendance.setStudentEntity(student);
             attendance.setMarkedBy(teacher);
             attendance.setDate(request.getDate());
@@ -88,6 +87,7 @@ public class AttendanceService implements IAttendanceService {
         }
 
         attendanceRepository.saveAll(attendanceList);
+
 
 
         return students;

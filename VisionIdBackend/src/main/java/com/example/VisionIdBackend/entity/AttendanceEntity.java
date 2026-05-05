@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"student_id", "date"})
+                @UniqueConstraint(columnNames = {"student_id", "subject_id", "date"})
         },
         indexes = {
                 @Index(name = "idx_attendance_date", columnList = "date")
@@ -41,6 +41,10 @@ public class AttendanceEntity extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id", nullable = false)
+    private SubjectEntity subjectEntity;
 }
 
 
