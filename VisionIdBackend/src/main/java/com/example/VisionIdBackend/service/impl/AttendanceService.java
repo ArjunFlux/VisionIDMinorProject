@@ -8,6 +8,7 @@ import com.example.VisionIdBackend.entity.StudentEntity;
 import com.example.VisionIdBackend.entity.TeacherEntity;
 import com.example.VisionIdBackend.entity.enums.AttendanceStatus;
 import com.example.VisionIdBackend.exception.ResourceNotFoundException;
+import com.example.VisionIdBackend.exception.TeacherAlreadyExistsException;
 import com.example.VisionIdBackend.repository.AttendanceRepository;
 import com.example.VisionIdBackend.repository.ClassRepository;
 import com.example.VisionIdBackend.repository.StudentRepository;
@@ -31,7 +32,7 @@ public class AttendanceService implements IAttendanceService {
 
 
     @Transactional
-    public void processAIAttendance(AIRequestDto request, String teacherEmail) {
+    public List<StudentEntity> processAIAttendance(AIRequestDto request, String teacherUid) {
 
 
         ClassEntity classEntity = classRepository
@@ -51,13 +52,6 @@ public class AttendanceService implements IAttendanceService {
         Set<String> recognizedRollSet =
                 new HashSet<>(request.getRecognizedStudents());
 
-//        for(StudentEntity student : students) {
-//
-//            if(attendanceRepository.findByStudentEntityAndDate(student,request.getDate()).isPresent()) {
-//                throw new RuntimeException("Attendance already marked for this date");
-//
-//            }
-//        }
 
         if (attendanceRepository
                 .existsByStudentEntity_BatchAndDate(classEntity, request.getDate())) {
@@ -67,7 +61,11 @@ public class AttendanceService implements IAttendanceService {
 
 
 
-        TeacherEntity teacher = teacherRepository.findByEmail(teacherEmail).orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+        TeacherEntity teacher = teacherRepository.findByUid(teacherUid);
+
+        if(teacher == null) {
+            throw new ResourceNotFoundException(teacherUid);
+        }
 
         List<AttendanceEntity> attendanceList = new ArrayList<>();
 
@@ -90,6 +88,9 @@ public class AttendanceService implements IAttendanceService {
         }
 
         attendanceRepository.saveAll(attendanceList);
+
+
+        return students;
 
     }
 }

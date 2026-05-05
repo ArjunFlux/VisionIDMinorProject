@@ -3,6 +3,7 @@ package com.example.VisionIdBackend.service.impl;
 import com.example.VisionIdBackend.dto.TeacherDto;
 import com.example.VisionIdBackend.dto.loginDtos.LoginRequestDto;
 import com.example.VisionIdBackend.entity.TeacherEntity;
+import com.example.VisionIdBackend.exception.ResourceNotFoundException;
 import com.example.VisionIdBackend.exception.TeacherAlreadyExistsException;
 import com.example.VisionIdBackend.mapper.TeacherMapper;
 import com.example.VisionIdBackend.repository.TeacherRepository;

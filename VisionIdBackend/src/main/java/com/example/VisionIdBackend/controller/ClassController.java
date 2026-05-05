@@ -35,6 +35,7 @@ public class ClassController {
     @GetMapping("/fetchAllClasses")
     private ResponseEntity<List<ClassDto>> getAllClasses(){
 
+
         List<ClassDto> classDtoList = classService.getAllClasses();
 
             return ResponseEntity.status(HttpStatus.OK).body(classDtoList);

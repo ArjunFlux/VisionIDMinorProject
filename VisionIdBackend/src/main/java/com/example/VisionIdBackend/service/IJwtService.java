@@ -9,4 +9,6 @@ public interface IJwtService {
     String extractUsername(String token);
 
     boolean validateToken(String token, UserDetails userDetails);
+
+    String extractUid(String token);
 }
