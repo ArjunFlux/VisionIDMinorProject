@@ -49,7 +49,9 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.csrf(customCsrfRequest -> customCsrfRequest.disable());
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/api/registerTeacher","/api/login").permitAll()
+                .requestMatchers("/api/registerTeacher", "/api/login", "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated());
 
         //http.formLogin(Customizer.withDefaults());
