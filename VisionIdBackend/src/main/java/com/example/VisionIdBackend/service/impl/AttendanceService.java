@@ -126,19 +126,30 @@ public class AttendanceService implements IAttendanceService {
             throw new ResourceNotFoundException("Teacher not found");
         }
 
-        List<StudentEntity> students = attendanceRepository.findStudentsByTeacherAndSubjectAndBatch(uid, dto.getSubject(), dto.getBatchCode()).orElseThrow(
-                () -> new ResourceNotFoundException("Students not found as per requirements")
+        ClassEntity classEntity = classRepository.findByBatchCode(dto.getBatchCode()).orElseThrow(
+                () -> new ResourceNotFoundException("Batch not found")
         );
+        SubjectEntity subjectEntity = subjectRepository.findByCode(dto.getSubject()).orElseThrow(
+                () -> new ResourceNotFoundException("Subject not found")
+        );
+        int totalClassesForSubject = subjectEntity.getTotalClasses();
 
-        List<StudentAttendanceDto> studentAttendanceDtoList = new ArrayList<>();
+        List<StudentEntity> students = studentRepository.findByBatch(classEntity);
 
-        for(StudentEntity student : students) {
-
-
-            StudentAttendanceDto s = AttendanceMapper.toStudentAttendanceDto(student,0.0);
-            studentAttendanceDtoList.add(s);
+        if (students.isEmpty()) {
+            throw new ResourceNotFoundException("Students not found as per requirements");
         }
+        return students.stream()
+                .map(student -> {
+                    long classesAttended = attendanceRepository.countByStudentEntityAndSubjectEntity_CodeAndStatus(
+                            student,
+                            dto.getSubject(),
+                            AttendanceStatus.PRESENT
+                    );
+                    double attendanceRatio = totalClassesForSubject == 0 ? 0.0 : (double) classesAttended / totalClassesForSubject;
 
-        return studentAttendanceDtoList;
+                    return AttendanceMapper.toStudentAttendanceDto(student, attendanceRatio);
+                })
+                .collect(Collectors.toList());
     }
 }

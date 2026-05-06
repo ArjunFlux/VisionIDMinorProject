@@ -4,6 +4,7 @@ package com.example.VisionIdBackend.repository;
 import com.example.VisionIdBackend.entity.AttendanceEntity;
 import com.example.VisionIdBackend.entity.ClassEntity;
 import com.example.VisionIdBackend.entity.StudentEntity;
+import com.example.VisionIdBackend.entity.enums.AttendanceStatus;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -34,13 +35,37 @@ public interface AttendanceRepository extends CrudRepository<AttendanceEntity, L
     @Query("""
                 SELECT DISTINCT a.studentEntity
                 FROM AttendanceEntity a
-                WHERE a.markedBy.id = :teacherId
+                WHERE a.markedBy.uid = :teacherId
                 AND a.subjectEntity.code = :subjectCode
-                AND a.studentEntity.classEntity.batchCode = :batchCode
+                AND a.studentEntity.batch.batchCode = :batchCode
             """)
     Optional<List<StudentEntity>> findStudentsByTeacherAndSubjectAndBatch(
             @Param("teacherId") String teacherId,
             @Param("subjectCode") String subjectCode,
             @Param("batchCode") String batchCode
+    );
+
+    long countByStudentEntityAndMarkedBy_UidAndSubjectEntity_Code(
+            StudentEntity studentEntity,
+            String teacherUid,
+            String subjectCode
+    );
+
+    long countByStudentEntityAndMarkedBy_UidAndSubjectEntity_CodeAndStatus(
+            StudentEntity studentEntity,
+            String teacherUid,
+            String subjectCode,
+            AttendanceStatus status
+    );
+
+    long countByStudentEntityAndSubjectEntity_Code(
+            StudentEntity studentEntity,
+            String subjectCode
+    );
+
+    long countByStudentEntityAndSubjectEntity_CodeAndStatus(
+            StudentEntity studentEntity,
+            String subjectCode,
+            AttendanceStatus status
     );
 }

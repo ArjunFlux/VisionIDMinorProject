@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceDto extends StudentEntity {
+public class AttendanceDto {
 
     String subject;
     String batchCode;

@@ -58,18 +58,17 @@ public class AttendanceController {
     }
 
 
-    @GetMapping("/get-percentage-attendanceOfAllStudents/")
-    public ResponseEntity<List<AttendanceEntity>> getPercentageAttendance(@RequestBody AttendanceDto dto
+    @GetMapping({"/get-percentage-attendanceOfAllStudents", "/get-percentage-attendanceOfAllStudents/"})
+    public ResponseEntity<List<StudentAttendanceDto>> getPercentageAttendance(@RequestBody AttendanceDto dto
             , @RequestHeader("Authorization") String authHeader) {
 
 
         String token = authHeader.substring(7);
         String uid = jwtService.extractUid(token);
+        List<StudentAttendanceDto> students = attendanceService.getAttendance_ForStudents_BatchWise(dto, uid);
 
-        List<StudentAttendanceDto> students =;
 
-
-        return ResponseEntity.status(HttpStatus.OK).body();
+        return ResponseEntity.status(HttpStatus.OK).body(students);
     }
 
 
