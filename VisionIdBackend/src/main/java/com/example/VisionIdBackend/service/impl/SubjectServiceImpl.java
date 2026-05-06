@@ -11,6 +11,8 @@ import com.example.VisionIdBackend.service.ISubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class SubjectServiceImpl implements ISubjectService {
@@ -49,5 +51,18 @@ public class SubjectServiceImpl implements ISubjectService {
 
         teacher.getSubjects().add(subject);
         teacherRepository.save(teacher);
+    }
+
+    @Override
+    public List<SubjectEntity> getAllSubjects() {
+
+        List<SubjectEntity> subjects = subjectRepository.findAll();
+
+        if(subjects.isEmpty()){
+            throw new  ResourceNotFoundException("You have not added subjects ");
+        }
+
+        return subjects;
+
     }
 }
