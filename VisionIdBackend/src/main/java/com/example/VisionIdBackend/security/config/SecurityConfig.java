@@ -47,22 +47,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        http.csrf(customCsrfRequest -> customCsrfRequest.disable());
-        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/api/registerTeacher", "/api/login", "/v3/api-docs/**",
-        "/swagger-ui/**",
-        "/swagger-ui.html",
-        "/api/attendance/ai-upload",
-        "/api/attendance/ai-upload/**").permitAll().anyRequest());
+http
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(
+                "/api/registerTeacher",
+                "/api/login",
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/api/attendance/ai-upload",
+                "/api/attendance/ai-upload/**"
+            ).permitAll()
+            .anyRequest().authenticated()   // <-- this was missing
+        )
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        //http.formLogin(Customizer.withDefaults());
-        // http.httpBasic(Customizer.withDefaults());
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+    return http.build();
     }
 
     @Bean
