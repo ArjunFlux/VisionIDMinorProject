@@ -26,17 +26,25 @@ public class AiController {
     @Autowired
     private IAttendanceService attendanceService;
 
-    @PostMapping("/attendance/ai-upload")
-    private ResponseEntity<List<StudentEntity>> uploadAttendance(@RequestBody AIRequestDto aiRequestDto
-            , @RequestHeader(value = "Authorization", required = false) String authHeader
-    ) {
-
-
+@PostMapping("/attendance/ai-upload")
+public ResponseEntity<List<StudentEntity>> uploadAttendance(
+        @RequestBody AIRequestDto aiRequestDto,
+        @RequestHeader(value = "Authorization", required = false) String authHeader
+) {
+    String teacherUid = null;
+    
+    // Only extract token if authHeader exists
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
         String token = authHeader.substring(7);
-        String uid =jwtService.extractUid(token) ;
-        List<StudentEntity> students = attendanceService.processAIAttendance(aiRequestDto,uid);
-
-        return ResponseEntity.status(HttpStatus.OK).body(students);
-
+        teacherUid = jwtService.extractUid(token);
     }
+
+    // Use teacherUid from payload if not from token
+    if (teacherUid == null || teacherUid.isBlank()) {
+        teacherUid = aiRequestDto.getTeacherUid();
+    }
+
+    List<StudentEntity> students = attendanceService.processAIAttendance(aiRequestDto, teacherUid);
+    return ResponseEntity.ok(students);
+}
 }
