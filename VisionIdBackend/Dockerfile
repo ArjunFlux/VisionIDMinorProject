@@ -1,11 +1,12 @@
-# Use OpenJDK 17 as base
-FROM openjdk:17-jdk-slim
-
-# Set working directory
+# Use Maven to build the app
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy the built jar file into the container
-COPY target/VisionIdBackend-0.0.1-SNAPSHOT.jar app.jar
-
-# Run the jar
+# Run the packaged JAR
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java","-jar","app.jar"]
