@@ -52,7 +52,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers("/api/registerTeacher", "/api/login", "/v3/api-docs/**",
                         "/swagger-ui/**",
-                        "/swagger-ui.html").permitAll()
+                        "/swagger-ui.html",
+                        "/api/attendance/ai-upload").permitAll()
                 .anyRequest().authenticated());
 
         //http.formLogin(Customizer.withDefaults());
