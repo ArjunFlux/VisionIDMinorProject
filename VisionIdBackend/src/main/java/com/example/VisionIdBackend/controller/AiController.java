@@ -28,7 +28,7 @@ public class AiController {
 
     @PostMapping("/attendance/ai-upload")
     private ResponseEntity<List<StudentEntity>> uploadAttendance(@RequestBody AIRequestDto aiRequestDto
-            , @RequestHeader("Authorization") String authHeader
+            , @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
 
 
