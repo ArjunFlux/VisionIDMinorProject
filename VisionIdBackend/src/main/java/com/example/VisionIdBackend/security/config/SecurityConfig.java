@@ -51,10 +51,10 @@ public class SecurityConfig {
         http.csrf(customCsrfRequest -> customCsrfRequest.disable());
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers("/api/registerTeacher", "/api/login", "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/api/attendance/ai-upload").permitAll()
-                .anyRequest().authenticated());
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/api/attendance/ai-upload",
+        "/api/attendance/ai-upload/**").permitAll());
 
         //http.formLogin(Customizer.withDefaults());
         // http.httpBasic(Customizer.withDefaults());
