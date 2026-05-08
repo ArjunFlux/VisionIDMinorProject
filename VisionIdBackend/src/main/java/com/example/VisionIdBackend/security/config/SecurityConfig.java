@@ -54,7 +54,7 @@ public class SecurityConfig {
         "/swagger-ui/**",
         "/swagger-ui.html",
         "/api/attendance/ai-upload",
-        "/api/attendance/ai-upload/**").permitAll().anyRequest().authenticated());
+        "/api/attendance/ai-upload/**").permitAll().anyRequest());
 
         //http.formLogin(Customizer.withDefaults());
         // http.httpBasic(Customizer.withDefaults());
