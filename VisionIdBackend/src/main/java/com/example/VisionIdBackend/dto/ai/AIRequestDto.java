@@ -29,6 +29,7 @@ public class AIRequestDto {
 
     @Column(nullable = false)
     private List<String> recognizedStudents;
+    private String teacherUid;
 }
 
 
